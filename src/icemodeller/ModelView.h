@@ -4,6 +4,8 @@
 #include "Model.h"
 
 void initialiseModelView();
+unsigned int createGridVAO();
+std::vector<float> getGridVertices();
 
 class Camera {
 	public:

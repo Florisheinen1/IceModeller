@@ -76,7 +76,6 @@ class Cube {
 		unsigned int createCubeVAO();
 };
 
-
 class Model {
 	public:
 		Model();

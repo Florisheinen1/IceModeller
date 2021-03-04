@@ -143,8 +143,11 @@ IceModeller::IceModeller() {
 	Cube tCube2 = Cube(glm::vec3(13.0, 2.0, 4.0), glm::vec3(2.0, 1.0, 2.0), Rotation{glm::vec3(0.0, 0.0, 0.0), RotationAxis::X, 0.0f});
 	testModel->getCubes()->push_back(tCube2);
 
-	Cube tCube3 = Cube(glm::vec3(0.0, 0.0, 0.0), glm::vec3(16.0, 0.5, 16.0), Rotation{glm::vec3(0.0, 0.0, 0.0), RotationAxis::X, 10.0f});
-	testModel->getCubes()->push_back(tCube3);
+	//Cube tCube3 = Cube(glm::vec3(0.0, 0.0, 0.0), glm::vec3(16.0, 0.5, 16.0), Rotation{glm::vec3(0.0, 0.0, 0.0), RotationAxis::X, 10.0f});
+	//testModel->getCubes()->push_back(tCube3);
+
+	Cube tCube4 = Cube(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), Rotation{glm::vec3(0.5, 0.5, 0.5), RotationAxis::Y, 45.0f});
+	testModel->getCubes()->push_back(tCube4);
 
 	ModelViewPanel* modelView = new ModelViewPanel();
 	modelView->preferredSide = gui::Side::CENTER;

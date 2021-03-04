@@ -11,6 +11,8 @@ const float CAMERA_MAX_YAW = 360.0f;
 const float CAMERA_MAX_PITCH = 89.0f;
 const float CAMERA_MIN_PITCH = -89.0f;
 
+unsigned int gridVAO;
+
 const glm::vec4 defaultCubeFaceColor[6] = {
 	glm::vec4(1.0, 0.0, 0.0, 1.0),	// NORTH	-> RED
 	glm::vec4(0.0, 1.0, 0.0, 1.0),	// EAST		-> GREEN
@@ -37,10 +39,129 @@ void initialiseModelView() {
 	cubeShader = new Shader("resources/shaders/cubeVertex.vs", "resources/shaders/cubeFragment.fs");
 	testShader = new Shader("resources/shaders/testVertex.vs", "resources/shaders/testFragment.fs");
 
-	//testCube = new Cube();
+	gridVAO = createGridVAO();
 
 	modelViewIsInitialised = true;
 }
+
+unsigned int createGridVAO() {
+	float vertices[] = {
+		0.0f, 0.0f, 0.0f,	16.0f, 0.0f, 0.0f,	// East pointer (red)
+		0.0f, 0.0f, 0.0f,	0.0f, 16.0f, 0.0f,	// Up pointer (green)
+		0.0f, 0.0f, 0.0f,	0.0f, 0.0f, 16.0f,	// South pointer (blue)
+
+		// East-west lines
+		0.0f, 0.0f, 1.0f,	16.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 2.0f,	16.0f, 0.0f, 2.0f,
+		0.0f, 0.0f, 3.0f,	16.0f, 0.0f, 3.0f,
+		0.0f, 0.0f, 4.0f,	16.0f, 0.0f, 4.0f,
+		0.0f, 0.0f, 5.0f,	16.0f, 0.0f, 5.0f,
+		0.0f, 0.0f, 6.0f,	16.0f, 0.0f, 6.0f,
+		0.0f, 0.0f, 7.0f,	16.0f, 0.0f, 7.0f,
+		0.0f, 0.0f, 8.0f,	16.0f, 0.0f, 8.0f,
+		0.0f, 0.0f, 9.0f,	16.0f, 0.0f, 9.0f,
+		0.0f, 0.0f, 10.0f,	16.0f, 0.0f, 10.0f,
+		0.0f, 0.0f, 11.0f,	16.0f, 0.0f, 11.0f,
+		0.0f, 0.0f, 12.0f,	16.0f, 0.0f, 12.0f,
+		0.0f, 0.0f, 13.0f,	16.0f, 0.0f, 13.0f,
+		0.0f, 0.0f, 14.0f,	16.0f, 0.0f, 14.0f,
+		0.0f, 0.0f, 15.0f,	16.0f, 0.0f, 15.0f,
+		0.0f, 0.0f, 16.0f,	16.0f, 0.0f, 16.0f,
+
+		// North-south lines
+		1.0f, 0.0f, 0.0f,	1.0f, 0.0f, 16.0f,
+		2.0f, 0.0f, 0.0f,	2.0f, 0.0f, 16.0f,
+		3.0f, 0.0f, 0.0f,	3.0f, 0.0f, 16.0f,
+		4.0f, 0.0f, 0.0f,	4.0f, 0.0f, 16.0f,
+		5.0f, 0.0f, 0.0f,	5.0f, 0.0f, 16.0f,
+		6.0f, 0.0f, 0.0f,	6.0f, 0.0f, 16.0f,
+		7.0f, 0.0f, 0.0f,	7.0f, 0.0f, 16.0f,
+		8.0f, 0.0f, 0.0f,	8.0f, 0.0f, 16.0f,
+		9.0f, 0.0f, 0.0f,	9.0f, 0.0f, 16.0f,
+		10.0f, 0.0f, 0.0f,	10.0f, 0.0f, 16.0f,
+		11.0f, 0.0f, 0.0f,	11.0f, 0.0f, 16.0f,
+		12.0f, 0.0f, 0.0f,	12.0f, 0.0f, 16.0f,
+		13.0f, 0.0f, 0.0f,	13.0f, 0.0f, 16.0f,
+		14.0f, 0.0f, 0.0f,	14.0f, 0.0f, 16.0f,
+		15.0f, 0.0f, 0.0f,	15.0f, 0.0f, 16.0f,
+		16.0f, 0.0f, 0.0f,	16.0f, 0.0f, 16.0f,
+	};
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	return VAO;
+}
+
+/*
+unsigned int createGridVAO() {
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	float* vertices = &getGridVertices()[0];
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(0);
+
+	return VAO;
+}
+
+std::vector<float> getGridVertices() {
+	std::vector<float> vertices = {
+		0.0f, 0.0f, 0.0f,		16.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,		16.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 2.0f,		16.0f, 0.0f, 2.0f,
+		0.0f, 0.0f, 3.0f,		16.0f, 0.0f, 3.0f,
+		0.0f, 0.0f, 4.0f,		16.0f, 0.0f, 4.0f,
+		0.0f, 0.0f, 5.0f,		16.0f, 0.0f, 5.0f,
+		0.0f, 0.0f, 6.0f,		16.0f, 0.0f, 6.0f,
+		0.0f, 0.0f, 7.0f,		16.0f, 0.0f, 7.0f,
+		0.0f, 0.0f, 8.0f,		16.0f, 0.0f, 8.0f,
+		0.0f, 0.0f, 9.0f,		16.0f, 0.0f, 9.0f,
+		0.0f, 0.0f, 10.0f,		16.0f, 0.0f, 10.0f,
+		0.0f, 0.0f, 11.0f,		16.0f, 0.0f, 11.0f,
+		0.0f, 0.0f, 12.0f,		16.0f, 0.0f, 12.0f,
+		0.0f, 0.0f, 13.0f,		16.0f, 0.0f, 13.0f,
+		0.0f, 0.0f, 14.0f,		16.0f, 0.0f, 14.0f,
+		0.0f, 0.0f, 15.0f,		16.0f, 0.0f, 15.0f,
+		0.0f, 0.0f, 16.0f,		16.0f, 0.0f, 16.0f,
+
+		0.0f, 0.0f, 0.0f,		0.0f, 0.0f, 16.0f,
+		1.0f, 0.0f, 0.0f,		1.0f, 0.0f, 16.0f,
+		2.0f, 0.0f, 0.0f,		2.0f, 0.0f, 16.0f,
+		3.0f, 0.0f, 0.0f,		3.0f, 0.0f, 16.0f,
+		4.0f, 0.0f, 0.0f,		4.0f, 0.0f, 16.0f,
+		5.0f, 0.0f, 0.0f,		5.0f, 0.0f, 16.0f,
+		6.0f, 0.0f, 0.0f,		6.0f, 0.0f, 16.0f,
+		7.0f, 0.0f, 0.0f,		7.0f, 0.0f, 16.0f,
+		8.0f, 0.0f, 0.0f,		8.0f, 0.0f, 16.0f,
+		9.0f, 0.0f, 0.0f,		9.0f, 0.0f, 16.0f,
+		10.0f, 0.0f, 0.0f,		10.0f, 0.0f, 16.0f,
+		11.0f, 0.0f, 0.0f,		11.0f, 0.0f, 16.0f,
+		12.0f, 0.0f, 0.0f,		12.0f, 0.0f, 16.0f,
+		13.0f, 0.0f, 0.0f,		13.0f, 0.0f, 16.0f,
+		14.0f, 0.0f, 0.0f,		14.0f, 0.0f, 16.0f,
+		15.0f, 0.0f, 0.0f,		15.0f, 0.0f, 16.0f,
+		16.0f, 0.0f, 0.0f,		16.0f, 0.0f, 16.0f
+	};
+
+	return vertices;
+}*/
 
 // Camera
 Camera::Camera() {
@@ -74,7 +195,7 @@ glm::mat4 Camera::getViewMatrix() {
 		WORLD_UP);
 }
 glm::mat4 Camera::getProjectionMatrix(int panelWidth, int panelHeight) {
-	return glm::perspective(glm::radians(this->fieldOfView), (float)panelWidth / (float)panelHeight, 0.2f, 1000.0f);
+	return glm::perspective(glm::radians(this->fieldOfView), (float)panelWidth / (float)panelHeight, 0.02f, 1000.0f);
 }
 void Camera::setMovingInDirection(Camera::MovementDirection direction, bool isMoving) {
 	this->isMovingInDirection[direction] = isMoving;
@@ -199,6 +320,7 @@ void ModelViewPanel::draw() {
 	this->drawModel();
 	this->drawGrid();
 
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 
 	// Restore original viewport
@@ -373,7 +495,32 @@ void ModelViewPanel::drawCube(Cube cube) {
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(30 * sizeof(float)));
 }
 void ModelViewPanel::drawGrid() {
+	lineShader->use();
+	
+	glm::mat4 projectionMatrix = this->camera.getProjectionMatrix(this->panelWidth, this->panelHeight);
+	lineShader->setMat4("projectionMatrix", projectionMatrix);
+	glm::mat4 viewMatrix = this->camera.getViewMatrix();
+	lineShader->setMat4("viewMatrix", viewMatrix);
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	lineShader->setMat4("modelMatrix", modelMatrix);
 
+	glBindVertexArray(gridVAO);
+
+	// Draw x axis
+	lineShader->setVec4("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	glDrawArrays(GL_LINES, 0, 2);
+
+	// Draw y axis
+	lineShader->setVec4("color", glm::vec4(0.0, 1.0, 0.0, 1.0));
+	glDrawArrays(GL_LINES, 2, 2);
+
+	// Draw z axis
+	lineShader->setVec4("color", glm::vec4(0.0, 0.0, 1.0, 1.0));
+	glDrawArrays(GL_LINES, 4, 2);
+
+	// Draw rest of grid
+	lineShader->setVec4("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
+	glDrawArrays(GL_LINES, 6, 70);
 }
 glm::mat4 ModelViewPanel::getModelMatrix(Cube* cube) {
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
